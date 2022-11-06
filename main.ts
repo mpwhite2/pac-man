@@ -1,3 +1,10 @@
+namespace SpriteKind {
+    export const Sfood = SpriteKind.create()
+}
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Sfood, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    info.changeScoreBy(1)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy()
     info.changeScoreBy(100)
@@ -16,6 +23,24 @@ tiles.placeOnTile(Pac, tiles.getTileLocation(19, 9))
 scene.cameraFollowSprite(Pac)
 let Foodspots = tiles.getTilesByType(assets.tile`transparency16`)
 Gamestate = 0
+tileUtil.createSpritesOnTiles(assets.tile`transparency16`, img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . 5 5 . . . . . . . 
+    . . . . . . . 5 5 . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Sfood)
 for (let index = 0; index < 5; index++) {
     Loc = Foodspots._pickRandom()
     _Food = sprites.create(img`
