@@ -4,8 +4,41 @@ namespace SpriteKind {
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Sfood, function (sprite, otherSprite) {
     otherSprite.destroy()
     info.changeScoreBy(1)
+    Pellets += -1
 })
+function EnemyMove (EnemySprite: Sprite) {
+    if (EnemySprite.isHittingTile(CollisionDirection.Left) || EnemySprite.isHittingTile(CollisionDirection.Top) || (EnemySprite.isHittingTile(CollisionDirection.Right) || EnemySprite.isHittingTile(CollisionDirection.Bottom))) {
+        if (Math.percentChance(25)) {
+            EnemySprite.vy = -100
+        } else if (Math.percentChance(33.333333)) {
+            EnemySprite.vy = 100
+        } else if (Math.percentChance(50)) {
+            EnemySprite.vx = -100
+        } else {
+            EnemySprite.vx = 100
+        }
+    }
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    _Food = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . 3 3 . . . . . . . 
+        . . . . . . 3 3 3 3 . . . . . . 
+        . . . . . . 3 3 3 3 . . . . . . 
+        . . . . . . . 3 3 . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Food)
+    tiles.placeOnRandomTile(_Food, assets.tile`transparency16`)
     otherSprite.destroy()
     info.changeScoreBy(100)
     Gamestate = 1
@@ -13,35 +46,124 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSpr
         Gamestate = 0
     })
 })
+function StartGame () {
+    for (let index = 0; index < 50; index++) {
+        _sfood = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . 5 5 . . . . . . . 
+            . . . . . . . 5 5 . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Sfood)
+        tiles.placeOnRandomTile(_sfood, assets.tile`transparency16`)
+    }
+}
+let _sfood: Sprite = null
 let _Food: Sprite = null
 let Loc: tiles.Location = null
 let Gamestate = 0
 tiles.setCurrentTilemap(tilemap`level1`)
 let Pac = sprites.create(assets.image`PAC-man`, SpriteKind.Player)
-controller.moveSprite(Pac)
+controller.moveSprite(Pac, 100, 100)
 tiles.placeOnTile(Pac, tiles.getTileLocation(19, 9))
 scene.cameraFollowSprite(Pac)
 let Foodspots = tiles.getTilesByType(assets.tile`transparency16`)
 Gamestate = 0
-tileUtil.createSpritesOnTiles(assets.tile`transparency16`, img`
+info.setScore(0)
+let Pellets = 50
+StartGame()
+let Enemy1 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
+    . . . . . . 3 3 3 3 . . . . . . 
+    . . . . . 3 3 3 3 3 3 . . . . . 
+    . . . . 3 3 3 3 3 3 3 3 . . . . 
+    . . . 3 3 1 3 3 3 3 1 3 3 . . . 
+    . . . 3 1 f 1 3 3 1 f 1 3 . . . 
+    . . . 3 3 1 3 3 3 3 1 3 3 . . . 
+    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+    . . . . 3 . 3 . 3 . 3 . 3 . . . 
     . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Enemy)
+Enemy1.vx = 100
+let Enemy2 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
+    . . . . . . 9 9 9 9 . . . . . . 
+    . . . . . 9 9 9 9 9 9 . . . . . 
+    . . . . 9 9 9 9 9 9 9 9 . . . . 
+    . . . 9 9 1 9 9 9 9 1 9 9 . . . 
+    . . . 9 1 f 1 9 9 1 f 1 9 . . . 
+    . . . 9 9 1 9 9 9 9 1 9 9 . . . 
+    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+    . . . . 9 . 9 . 9 . 9 . 9 . . . 
     . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Enemy)
+Enemy2.vx = -100
+let Enemy3 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
+    . . . . . . 4 4 4 4 . . . . . . 
+    . . . . . 4 4 4 4 4 4 . . . . . 
+    . . . . 4 4 4 4 4 4 4 4 . . . . 
+    . . . 4 4 1 4 4 4 4 1 4 4 . . . 
+    . . . 4 1 f 1 4 4 1 f 1 4 . . . 
+    . . . 4 4 1 4 4 4 4 1 4 4 . . . 
+    . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+    . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+    . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+    . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+    . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+    . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+    . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+    . . . . 4 . 4 . 4 . 4 . 4 . . . 
     . . . . . . . . . . . . . . . . 
-    . . . . . . . 5 5 . . . . . . . 
-    . . . . . . . 5 5 . . . . . . . 
+    `, SpriteKind.Enemy)
+Enemy3.vy = 100
+let Enemy4 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
+    . . . . . . 2 2 2 2 . . . . . . 
+    . . . . . 2 2 2 2 2 2 . . . . . 
+    . . . . 2 2 2 2 2 2 2 2 . . . . 
+    . . . 2 2 1 2 2 2 2 1 2 2 . . . 
+    . . . 2 1 f 1 2 2 1 f 1 2 . . . 
+    . . . 2 2 1 2 2 2 2 1 2 2 . . . 
+    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
+    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
+    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
+    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
+    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
+    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
+    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
+    . . . . 2 . 2 . 2 . 2 . 2 . . . 
     . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Sfood)
-for (let index = 0; index < 5; index++) {
+    `, SpriteKind.Enemy)
+Enemy4.vy = -100
+tiles.placeOnTile(Enemy1, tiles.getTileLocation(9, 9))
+tiles.placeOnTile(Enemy2, tiles.getTileLocation(10, 9))
+tiles.placeOnTile(Enemy3, tiles.getTileLocation(9, 10))
+tiles.placeOnTile(Enemy4, tiles.getTileLocation(10, 10))
+for (let index = 0; index < 3; index++) {
     Loc = Foodspots._pickRandom()
     _Food = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -63,83 +185,6 @@ for (let index = 0; index < 5; index++) {
         `, SpriteKind.Food)
     tiles.placeOnTile(_Food, Loc)
 }
-info.setScore(0)
-let Enemy1 = sprites.create(img`
-    . . . . . . . . . . . . . . . . 
-    . . . . . . 3 3 3 3 . . . . . . 
-    . . . . . 3 3 3 3 3 3 . . . . . 
-    . . . . 3 3 3 3 3 3 3 3 . . . . 
-    . . . 3 3 1 3 3 3 3 1 3 3 . . . 
-    . . . 3 1 f 1 3 3 1 f 1 3 . . . 
-    . . . 3 3 1 3 3 3 3 1 3 3 . . . 
-    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
-    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
-    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
-    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
-    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
-    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
-    . . . 3 3 3 3 3 3 3 3 3 3 . . . 
-    . . . . 3 . 3 . 3 . 3 . 3 . . . 
-    . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Enemy)
-let Enemy2 = sprites.create(img`
-    . . . . . . . . . . . . . . . . 
-    . . . . . . 9 9 9 9 . . . . . . 
-    . . . . . 9 9 9 9 9 9 . . . . . 
-    . . . . 9 9 9 9 9 9 9 9 . . . . 
-    . . . 9 9 1 9 9 9 9 1 9 9 . . . 
-    . . . 9 1 f 1 9 9 1 f 1 9 . . . 
-    . . . 9 9 1 9 9 9 9 1 9 9 . . . 
-    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
-    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
-    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
-    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
-    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
-    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
-    . . . 9 9 9 9 9 9 9 9 9 9 . . . 
-    . . . . 9 . 9 . 9 . 9 . 9 . . . 
-    . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Enemy)
-let Enemy3 = sprites.create(img`
-    . . . . . . . . . . . . . . . . 
-    . . . . . . 7 7 7 7 . . . . . . 
-    . . . . . 7 7 7 7 7 7 . . . . . 
-    . . . . 7 7 7 7 7 7 7 7 . . . . 
-    . . . 7 7 1 7 7 7 7 1 7 7 . . . 
-    . . . 7 1 f 1 7 7 1 f 1 7 . . . 
-    . . . 7 7 1 7 7 7 7 1 7 7 . . . 
-    . . . 7 7 7 7 7 7 7 7 7 7 . . . 
-    . . . 7 7 7 7 7 7 7 7 7 7 . . . 
-    . . . 7 7 7 7 7 7 7 7 7 7 . . . 
-    . . . 7 7 7 7 7 7 7 7 7 7 . . . 
-    . . . 7 7 7 7 7 7 7 7 7 7 . . . 
-    . . . 7 7 7 7 7 7 7 7 7 7 . . . 
-    . . . 7 7 7 7 7 7 7 7 7 7 . . . 
-    . . . . 7 . 7 . 7 . 7 . 7 . . . 
-    . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Enemy)
-let Enemy4 = sprites.create(img`
-    . . . . . . . . . . . . . . . . 
-    . . . . . . 2 2 2 2 . . . . . . 
-    . . . . . 2 2 2 2 2 2 . . . . . 
-    . . . . 2 2 2 2 2 2 2 2 . . . . 
-    . . . 2 2 1 2 2 2 2 1 2 2 . . . 
-    . . . 2 1 f 1 2 2 1 f 1 2 . . . 
-    . . . 2 2 1 2 2 2 2 1 2 2 . . . 
-    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
-    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
-    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
-    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
-    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
-    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
-    . . . 2 2 2 2 2 2 2 2 2 2 . . . 
-    . . . . 2 . 2 . 2 . 2 . 2 . . . 
-    . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Enemy)
-tiles.placeOnTile(Enemy1, tiles.getTileLocation(9, 9))
-tiles.placeOnTile(Enemy2, tiles.getTileLocation(10, 9))
-tiles.placeOnTile(Enemy3, tiles.getTileLocation(9, 10))
-tiles.placeOnTile(Enemy4, tiles.getTileLocation(10, 10))
 forever(function () {
     characterAnimations.loopFrames(
     Pac,
@@ -301,4 +346,12 @@ forever(function () {
     250,
     characterAnimations.rule(Predicate.MovingDown)
     )
+    if (Pellets == 0) {
+        Pellets = 50
+        StartGame()
+    }
+    EnemyMove(Enemy1)
+    EnemyMove(Enemy2)
+    EnemyMove(Enemy3)
+    EnemyMove(Enemy4)
 })
