@@ -1,45 +1,40 @@
-namespace SpriteKind {
-    export const Sfood = SpriteKind.create()
-    export const Door = SpriteKind.create()
-}
+@namespace
+class SpriteKind:
+    Sfood = SpriteKind.create()
+    Door = SpriteKind.create()
 
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Sfood, function on_on_overlap(sprite: Sprite, otherSprite: Sprite) {
-    
+def on_on_overlap(sprite, otherSprite):
+    global Pellets
     otherSprite.destroy()
-    info.changeScoreBy(1)
+    info.change_score_by(1)
     Pellets += -1
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap2(sprite4: Sprite, otherSprite4: Sprite) {
-    game.over(false)
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Door, function on_on_overlap3(sprite2: Sprite, otherSprite2: Sprite) {
-    if (otherSprite2 == mySprite) {
-        tiles.placeOnTile(Pac, tiles.getTileLocation(18, 9))
-    } else {
-        tiles.placeOnTile(Pac, tiles.getTileLocation(1, 9))
-    }
-    
-})
-function EnemyMove(EnemySprite: Sprite) {
-    if (EnemySprite.isHittingTile(CollisionDirection.Left) || EnemySprite.isHittingTile(CollisionDirection.Top) || (EnemySprite.isHittingTile(CollisionDirection.Right) || EnemySprite.isHittingTile(CollisionDirection.Bottom))) {
-        if (Math.percentChance(25)) {
-            EnemySprite.vy = -100
-        } else if (Math.percentChance(33.333333)) {
-            EnemySprite.vy = 100
-        } else if (Math.percentChance(50)) {
-            EnemySprite.vx = -100
-        } else {
-            EnemySprite.vx = 100
-        }
-        
-    }
-    
-}
+sprites.on_overlap(SpriteKind.player, SpriteKind.Sfood, on_on_overlap)
 
-function StartGame() {
-    
-    for (let index = 0; index < 100; index++) {
-        _sfood = sprites.create(img`
+def on_on_overlap2(sprite4, otherSprite4):
+    game.over(False)
+sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap2)
+
+def on_on_overlap3(sprite2, otherSprite2):
+    if otherSprite2 == mySprite:
+        tiles.place_on_tile(Pac, tiles.get_tile_location(18, 9))
+    else:
+        tiles.place_on_tile(Pac, tiles.get_tile_location(1, 9))
+sprites.on_overlap(SpriteKind.player, SpriteKind.Door, on_on_overlap3)
+
+def EnemyMove(EnemySprite: Sprite):
+    if EnemySprite.is_hitting_tile(CollisionDirection.LEFT) or EnemySprite.is_hitting_tile(CollisionDirection.TOP) or (EnemySprite.is_hitting_tile(CollisionDirection.RIGHT) or EnemySprite.is_hitting_tile(CollisionDirection.BOTTOM)):
+        if Math.percent_chance(25):
+            EnemySprite.vy = -100
+        elif Math.percent_chance(33.333333):
+            EnemySprite.vy = 100
+        elif Math.percent_chance(50):
+            EnemySprite.vx = -100
+        else:
+            EnemySprite.vx = 100
+def StartGame():
+    global _sfood
+    for index in range(100):
+        _sfood = sprites.create(img("""
                 . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
@@ -56,16 +51,15 @@ function StartGame() {
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . .
-            `, SpriteKind.Sfood)
-        tiles.placeOnRandomTile(_sfood, assets.tile`
+            """),
+            SpriteKind.Sfood)
+        tiles.place_on_random_tile(_sfood, assets.tile("""
             transparency16
-        `)
-    }
-}
+        """))
 
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function on_on_overlap4(sprite3: Sprite, otherSprite3: Sprite) {
-    
-    _Food = sprites.create(img`
+def on_on_overlap4(sprite3, otherSprite3):
+    global _Food, Gamestate
+    _Food = sprites.create(img("""
             . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
@@ -82,41 +76,45 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function on_on_overlap4(sp
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . .
-        `, SpriteKind.Food)
-    tiles.placeOnRandomTile(_Food, assets.tile`
+        """),
+        SpriteKind.food)
+    tiles.place_on_random_tile(_Food, assets.tile("""
         transparency16
-    `)
+    """))
     otherSprite3.destroy()
-    info.changeScoreBy(100)
+    info.change_score_by(100)
     Gamestate = 1
-    timer.after(10000, function on_after() {
-        
+    
+    def on_after():
+        global Gamestate
         Gamestate = 0
-    })
-})
-let _sfood : Sprite = null
-let mySprite : Sprite = null
-let _Food : Sprite = null
-let Loc : tiles.Location = null
-let Gamestate = 0
-let Pac : Sprite = null
-tiles.setCurrentTilemap(tilemap`
-    level1
-`)
-Pac = sprites.create(assets.image`
-    PAC-man
-`, SpriteKind.Player)
-controller.moveSprite(Pac, 100, 100)
-tiles.placeOnTile(Pac, tiles.getTileLocation(18, 9))
-scene.cameraFollowSprite(Pac)
-let Foodspots = tiles.getTilesByType(assets.tile`
-    transparency16
-`)
+    timer.after(10000, on_after)
+    
+sprites.on_overlap(SpriteKind.player, SpriteKind.food, on_on_overlap4)
+
+_sfood: Sprite = None
+mySprite: Sprite = None
+_Food: Sprite = None
+Loc: tiles.Location = None
 Gamestate = 0
-info.setScore(0)
-let Pellets = 50
+Pac: Sprite = None
+tiles.set_current_tilemap(tilemap("""
+    level1
+"""))
+Pac = sprites.create(assets.image("""
+    PAC-man
+"""), SpriteKind.player)
+controller.move_sprite(Pac, 100, 100)
+tiles.place_on_tile(Pac, tiles.get_tile_location(18, 9))
+scene.camera_follow_sprite(Pac)
+Foodspots = tiles.get_tiles_by_type(assets.tile("""
+    transparency16
+"""))
+Gamestate = 0
+info.set_score(0)
+Pellets = 50
 StartGame()
-let Enemy1 = sprites.create(img`
+Enemy1 = sprites.create(img("""
         . . . . . . . . . . . . . . . . 
             . . . . . . 3 3 3 3 . . . . . . 
             . . . . . 3 3 3 3 3 3 . . . . . 
@@ -133,9 +131,10 @@ let Enemy1 = sprites.create(img`
             . . . 3 3 3 3 3 3 3 3 3 3 . . . 
             . . . . 3 . 3 . 3 . 3 . 3 . . . 
             . . . . . . . . . . . . . . . .
-    `, SpriteKind.Enemy)
+    """),
+    SpriteKind.enemy)
 Enemy1.vx = 100
-let Enemy2 = sprites.create(img`
+Enemy2 = sprites.create(img("""
         . . . . . . . . . . . . . . . . 
             . . . . . . 9 9 9 9 . . . . . . 
             . . . . . 9 9 9 9 9 9 . . . . . 
@@ -152,9 +151,10 @@ let Enemy2 = sprites.create(img`
             . . . 9 9 9 9 9 9 9 9 9 9 . . . 
             . . . . 9 . 9 . 9 . 9 . 9 . . . 
             . . . . . . . . . . . . . . . .
-    `, SpriteKind.Enemy)
+    """),
+    SpriteKind.enemy)
 Enemy2.vx = -100
-let Enemy3 = sprites.create(img`
+Enemy3 = sprites.create(img("""
         . . . . . . . . . . . . . . . . 
             . . . . . . 4 4 4 4 . . . . . . 
             . . . . . 4 4 4 4 4 4 . . . . . 
@@ -171,9 +171,10 @@ let Enemy3 = sprites.create(img`
             . . . 4 4 4 4 4 4 4 4 4 4 . . . 
             . . . . 4 . 4 . 4 . 4 . 4 . . . 
             . . . . . . . . . . . . . . . .
-    `, SpriteKind.Enemy)
+    """),
+    SpriteKind.enemy)
 Enemy3.vy = 100
-let Enemy4 = sprites.create(img`
+Enemy4 = sprites.create(img("""
         . . . . . . . . . . . . . . . . 
             . . . . . . 2 2 2 2 . . . . . . 
             . . . . . 2 2 2 2 2 2 . . . . . 
@@ -190,15 +191,16 @@ let Enemy4 = sprites.create(img`
             . . . 2 2 2 2 2 2 2 2 2 2 . . . 
             . . . . 2 . 2 . 2 . 2 . 2 . . . 
             . . . . . . . . . . . . . . . .
-    `, SpriteKind.Enemy)
+    """),
+    SpriteKind.enemy)
 Enemy4.vy = -100
-tiles.placeOnTile(Enemy1, tiles.getTileLocation(9, 9))
-tiles.placeOnTile(Enemy2, tiles.getTileLocation(10, 9))
-tiles.placeOnTile(Enemy3, tiles.getTileLocation(9, 10))
-tiles.placeOnTile(Enemy4, tiles.getTileLocation(10, 10))
-for (let index2 = 0; index2 < 3; index2++) {
-    Loc = Foodspots._pickRandom()
-    _Food = sprites.create(img`
+tiles.place_on_tile(Enemy1, tiles.get_tile_location(9, 9))
+tiles.place_on_tile(Enemy2, tiles.get_tile_location(10, 9))
+tiles.place_on_tile(Enemy3, tiles.get_tile_location(9, 10))
+tiles.place_on_tile(Enemy4, tiles.get_tile_location(10, 10))
+for index2 in range(3):
+    Loc = Foodspots._pick_random()
+    _Food = sprites.create(img("""
             . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
@@ -215,10 +217,10 @@ for (let index2 = 0; index2 < 3; index2++) {
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . .
-        `, SpriteKind.Food)
-    tiles.placeOnTile(_Food, Loc)
-}
-mySprite = sprites.create(img`
+        """),
+        SpriteKind.food)
+    tiles.place_on_tile(_Food, Loc)
+mySprite = sprites.create(img("""
         f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f 
@@ -235,9 +237,10 @@ mySprite = sprites.create(img`
             f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f
-    `, SpriteKind.Door)
-tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 9))
-let mySprite2 = sprites.create(img`
+    """),
+    SpriteKind.Door)
+tiles.place_on_tile(mySprite, tiles.get_tile_location(0, 9))
+mySprite2 = sprites.create(img("""
         f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f 
@@ -254,11 +257,14 @@ let mySprite2 = sprites.create(img`
             f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f 
             f f f f f f f f f f f f f f f f
-    `, SpriteKind.Door)
-tiles.placeOnTile(mySprite2, tiles.getTileLocation(19, 9))
-forever(function on_forever() {
-    
-    characterAnimations.loopFrames(Pac, [img`
+    """),
+    SpriteKind.Door)
+tiles.place_on_tile(mySprite2, tiles.get_tile_location(19, 9))
+
+def on_forever():
+    global Pellets
+    characterAnimations.loop_frames(Pac,
+        [img("""
                 . . . . . 5 5 5 5 5 5 . . . . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
@@ -275,7 +281,8 @@ forever(function on_forever() {
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . . . . 5 5 5 5 5 5 . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . 5 5 5 5 5 5 . . . . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
@@ -292,8 +299,11 @@ forever(function on_forever() {
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . . . . 5 5 5 5 5 5 . . . . .
-            `], 250, characterAnimations.rule(Predicate.MovingRight))
-    characterAnimations.loopFrames(Pac, [img`
+            """)],
+        250,
+        characterAnimations.rule(Predicate.MOVING_RIGHT))
+    characterAnimations.loop_frames(Pac,
+        [img("""
                 . . . . . 5 5 5 5 5 5 . . . . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
@@ -310,7 +320,8 @@ forever(function on_forever() {
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . . . . 5 5 5 5 5 5 . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . 5 5 5 5 5 5 . . . . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
@@ -327,8 +338,11 @@ forever(function on_forever() {
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . . . . 5 5 5 5 5 5 . . . . .
-            `], 200, characterAnimations.rule(Predicate.MovingLeft))
-    characterAnimations.loopFrames(Pac, [img`
+            """)],
+        200,
+        characterAnimations.rule(Predicate.MOVING_LEFT))
+    characterAnimations.loop_frames(Pac,
+        [img("""
                 . . . . . 5 . . . . 5 . . . . . 
                         . . . 5 5 5 . . . . 5 5 5 . . . 
                         . . 5 5 5 5 . . . . 5 5 5 5 . . 
@@ -345,7 +359,8 @@ forever(function on_forever() {
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . . . . 5 5 5 5 5 5 . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . 5 5 . . 5 5 . . . . . 
                         . . . 5 5 5 5 . . 5 5 5 5 . . . 
                         . . 5 5 5 5 5 . . 5 5 5 5 5 . . 
@@ -362,8 +377,11 @@ forever(function on_forever() {
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . . . . 5 5 5 5 5 5 . . . . .
-            `], 250, characterAnimations.rule(Predicate.MovingUp))
-    characterAnimations.loopFrames(Pac, [img`
+            """)],
+        250,
+        characterAnimations.rule(Predicate.MOVING_UP))
+    characterAnimations.loop_frames(Pac,
+        [img("""
                 . . . . . 5 5 5 5 5 5 . . . . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
@@ -380,7 +398,8 @@ forever(function on_forever() {
                         . . 5 5 5 5 . . . . 5 5 5 5 . . 
                         . . . 5 5 5 . . . . 5 5 5 . . . 
                         . . . . . 5 . . . . 5 . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . 5 5 5 5 5 5 . . . . . 
                         . . . 5 5 5 5 5 5 5 5 5 5 . . . 
                         . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
@@ -397,14 +416,14 @@ forever(function on_forever() {
                         . . 5 5 5 5 5 . . 5 5 5 5 5 . . 
                         . . . 5 5 5 5 . . 5 5 5 5 . . . 
                         . . . . . 5 5 . . 5 5 . . . . .
-            `], 250, characterAnimations.rule(Predicate.MovingDown))
-    if (Pellets == 0) {
+            """)],
+        250,
+        characterAnimations.rule(Predicate.MOVING_DOWN))
+    if Pellets == 0:
         Pellets = 50
         StartGame()
-    }
-    
     EnemyMove(Enemy1)
     EnemyMove(Enemy2)
     EnemyMove(Enemy3)
     EnemyMove(Enemy4)
-})
+forever(on_forever)

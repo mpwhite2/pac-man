@@ -6,7 +6,8 @@
         "controller": "*",
         "arcade-character-animations": "github:microsoft/arcade-character-animations#v0.0.2",
         "Timers": "github:microsoft/arcade-timers#v1.1.0",
-        "arcade-tile-util": "github:microsoft/arcade-tile-util#v1.0.1"
+        "arcade-tile-util": "github:microsoft/arcade-tile-util#v1.0.1",
+        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.1.0"
     },
     "files": [
         "main.blocks",
@@ -16,17 +17,18 @@
         "tilemap.g.jres",
         "tilemap.g.ts",
         "images.g.jres",
-        "images.g.ts"
+        "images.g.ts",
+        "main.py"
     ],
     "testFiles": [
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.10.36",
+        "target": "1.11.36",
         "targetId": "arcade"
     },
     "supportedTargets": [
         "arcade"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "tsprj"
 }
