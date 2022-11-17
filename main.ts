@@ -1,6 +1,7 @@
 namespace SpriteKind {
     export const Sfood = SpriteKind.create()
     export const Door = SpriteKind.create()
+    export const Overlay = SpriteKind.create()
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Sfood, function (sprite, otherSprite) {
     otherSprite.destroy()
@@ -8,8 +9,16 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Sfood, function (sprite, otherSp
     Pellets += -1
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite4, otherSprite4) {
-    info.changeLifeBy(-1)
-    tiles.placeOnRandomTile(otherSprite4, assets.tile`transparency16`)
+    if (Gamestate == 1) {
+        info.changeScoreBy(400)
+        otherSprite4.setFlag(SpriteFlag.Ghost, true)
+        otherSprite4.setFlag(SpriteFlag.Invisible, true)
+        Win += 1
+    } else {
+        info.changeLifeBy(-1)
+        tiles.placeOnRandomTile(otherSprite4, assets.tile`transparency16`)
+        game.showLongText("You lost a life!", DialogLayout.Full)
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Door, function (sprite2, otherSprite2) {
     if (otherSprite2 == mySprite) {
@@ -57,6 +66,82 @@ function StartGame () {
         tiles.placeOnRandomTile(_sfood, assets.tile`transparency16`)
     }
 }
+function doSomething2 () {
+    Img = [
+    img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 3 3 3 3 . . . . . . 
+        . . . . . 3 3 3 3 3 3 . . . . . 
+        . . . . 3 3 3 3 3 3 3 3 . . . . 
+        . . . 3 1 1 3 3 3 1 1 3 3 . . . 
+        . . . 3 f 1 3 3 3 f 1 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . 3 3 3 3 3 3 3 3 3 3 . . . 
+        . . . . 3 . 3 . 3 . 3 . 3 . . . 
+        . . . . . . . . . . . . . . . . 
+        `,
+    img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 9 9 9 9 . . . . . . 
+        . . . . . 9 9 9 9 9 9 . . . . . 
+        . . . . 9 9 9 9 9 9 9 9 . . . . 
+        . . . 9 9 1 1 9 9 9 1 1 9 . . . 
+        . . . 9 9 1 f 9 9 9 1 f 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . 9 9 9 9 9 9 9 9 9 9 . . . 
+        . . . . 9 . 9 . 9 . 9 . 9 . . . 
+        . . . . . . . . . . . . . . . . 
+        `,
+    img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 4 4 4 4 . . . . . . 
+        . . . . . 4 4 4 4 4 4 . . . . . 
+        . . . . 4 4 4 4 4 4 4 4 . . . . 
+        . . . 4 1 1 4 4 4 1 1 4 4 . . . 
+        . . . 4 f 1 4 4 4 f 1 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . 4 4 4 4 4 4 4 4 4 4 . . . 
+        . . . . 4 . 4 . 4 . 4 . 4 . . . 
+        . . . . . . . . . . . . . . . . 
+        `,
+    img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 8 8 8 8 . . . . . . 
+        . . . . . 8 8 8 8 8 8 . . . . . 
+        . . . . 8 8 8 8 8 8 8 8 . . . . 
+        . . . 8 8 1 1 8 8 8 1 1 8 . . . 
+        . . . 8 8 1 f 8 8 8 1 f 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . 8 8 8 8 8 8 8 8 8 8 . . . 
+        . . . . 8 . 8 . 8 . 8 . 8 . . . 
+        . . . . . . . . . . . . . . . . 
+        `
+    ]
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite3, otherSprite3) {
     _Food = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -87,10 +172,14 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite3, otherSp
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.setVelocity(0 - sprite.vx / 10, 0 - sprite.vy / 10)
 })
+let Flagghost: Sprite = null
+let list: Sprite[] = []
+let Prevgamestate = 0
 let projectile4: Sprite = null
 let projectile3: Sprite = null
 let projectile2: Sprite = null
 let projectile: Sprite = null
+let Img: Image[] = []
 let _sfood: Sprite = null
 let mySprite: Sprite = null
 let _Food: Sprite = null
@@ -187,7 +276,7 @@ tiles.placeOnTile(Enemy1, tiles.getTileLocation(9, 9))
 tiles.placeOnTile(Enemy2, tiles.getTileLocation(10, 9))
 tiles.placeOnTile(Enemy3, tiles.getTileLocation(9, 10))
 tiles.placeOnTile(Enemy4, tiles.getTileLocation(10, 10))
-for (let index = 0; index < 3; index++) {
+for (let index = 0; index < 1; index++) {
     Loc = Foodspots._pickRandom()
     _Food = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -248,6 +337,8 @@ let mySprite2 = sprites.create(img`
     `, SpriteKind.Door)
 tiles.placeOnTile(mySprite2, tiles.getTileLocation(19, 9))
 info.setLife(3)
+doSomething2()
+let Win = 0
 game.onUpdateInterval(10, function () {
     projectile = sprites.createProjectileFromSprite(img`
         . . . . . . . . . . . . . . . . 
@@ -329,6 +420,39 @@ game.onUpdateInterval(10, function () {
         `, Pac, -1000, 0)
     projectile4.setFlag(SpriteFlag.Invisible, true)
     projectile4.setFlag(SpriteFlag.DestroyOnWall, true)
+})
+game.onUpdateInterval(1, function () {
+    if (Gamestate == 1 && Prevgamestate == 0) {
+        list = sprites.allOfKind(SpriteKind.Enemy)
+        for (let index = 0; index < 4; index++) {
+            Flagghost = list.shift()
+            Flagghost.setImage(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . 6 6 6 6 . . . . . . 
+                . . . . . 6 6 6 6 6 6 . . . . . 
+                . . . . 6 6 6 6 6 6 6 6 . . . . 
+                . . . 6 6 9 9 6 6 6 9 9 6 . . . 
+                . . . 6 6 9 f 6 6 6 9 f 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . 6 6 6 6 6 6 6 6 6 6 . . . 
+                . . . . 6 . 6 . 6 . 6 . 6 . . . 
+                . . . . . . . . . . . . . . . . 
+                `)
+        }
+    }
+    if (Gamestate == 0 && Prevgamestate == 1) {
+        list = sprites.allOfKind(SpriteKind.Enemy)
+        for (let index = 0; index < 4; index++) {
+            list.pop().setImage(Img.shift())
+        }
+    }
+    Prevgamestate = Gamestate
 })
 forever(function () {
     characterAnimations.loopFrames(
@@ -499,4 +623,7 @@ forever(function () {
     EnemyMove(Enemy2)
     EnemyMove(Enemy3)
     EnemyMove(Enemy4)
+    if (Win == 4) {
+        game.over(true)
+    }
 })
