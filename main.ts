@@ -5,7 +5,7 @@ namespace SpriteKind {
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Sfood, function (sprite, otherSprite) {
     otherSprite.destroy()
-    info.changeScoreBy(1)
+    info.changeScoreBy(10)
     Pellets += -1
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite4, otherSprite4) {
@@ -17,7 +17,14 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite4, otherS
     } else {
         info.changeLifeBy(-1)
         tiles.placeOnRandomTile(otherSprite4, assets.tile`transparency16`)
-        game.showLongText("You lost a life!", DialogLayout.Full)
+        game.showLongText("      You lost a life!", DialogLayout.Bottom)
+    }
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Door, function (sprite, otherSprite) {
+    if (otherSprite == mySprite) {
+        tiles.placeOnTile(sprite, tiles.getTileLocation(18, 9))
+    } else {
+        tiles.placeOnTile(sprite, tiles.getTileLocation(1, 9))
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Door, function (sprite2, otherSprite2) {
@@ -25,6 +32,13 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Door, function (sprite2, otherSp
         tiles.placeOnTile(Pac, tiles.getTileLocation(18, 9))
     } else {
         tiles.placeOnTile(Pac, tiles.getTileLocation(1, 9))
+    }
+})
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Door, function (sprite, otherSprite) {
+    if (otherSprite == mySprite) {
+        tiles.placeOnTile(sprite, tiles.getTileLocation(18, 9))
+    } else {
+        tiles.placeOnTile(sprite, tiles.getTileLocation(1, 9))
     }
 })
 info.onLifeZero(function () {
@@ -44,7 +58,7 @@ function EnemyMove (EnemySprite: Sprite) {
     }
 }
 function StartGame () {
-    for (let index = 0; index < 15; index++) {
+    for (let index = 0; index < 50; index++) {
         _sfood = sprites.create(img`
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -52,9 +66,9 @@ function StartGame () {
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
-            . . . . . . . 5 5 . . . . . . . 
-            . . . . . . . 5 5 . . . . . . . 
             . . . . . . . . . . . . . . . . 
+            . . . . . . . 5 5 . . . . . . . 
+            . . . . . . . 5 5 . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -63,7 +77,7 @@ function StartGame () {
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Sfood)
-        tiles.placeOnRandomTile(_sfood, assets.tile`transparency16`)
+        tiles.placeOnTile(_sfood, tiles.getTilesByType(assets.tile`transparency16`)._pickRandom())
     }
 }
 function doSomething2 () {
@@ -170,7 +184,11 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite3, otherSp
     })
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
-    otherSprite.setVelocity(0 - sprite.vx / 10, 0 - sprite.vy / 10)
+    if (Gamestate == 0) {
+        otherSprite.setVelocity(0 - sprite.vx / 5, 0 - sprite.vy / 5)
+    } else {
+        otherSprite.setVelocity(0 + sprite.vx / 10, 0 + sprite.vy / 10)
+    }
 })
 let Flagghost: Sprite = null
 let list: Sprite[] = []
@@ -181,6 +199,7 @@ let projectile2: Sprite = null
 let projectile: Sprite = null
 let Img: Image[] = []
 let _sfood: Sprite = null
+let Win = 0
 let mySprite: Sprite = null
 let _Food: Sprite = null
 let Loc: tiles.Location = null
@@ -338,7 +357,6 @@ let mySprite2 = sprites.create(img`
 tiles.placeOnTile(mySprite2, tiles.getTileLocation(19, 9))
 info.setLife(3)
 doSomething2()
-let Win = 0
 game.onUpdateInterval(10, function () {
     projectile = sprites.createProjectileFromSprite(img`
         . . . . . . . . . . . . . . . . 
@@ -451,6 +469,7 @@ game.onUpdateInterval(1, function () {
         for (let index = 0; index < 4; index++) {
             list.pop().setImage(Img.shift())
         }
+        doSomething2()
     }
     Prevgamestate = Gamestate
 })
