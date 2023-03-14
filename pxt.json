@@ -1,5 +1,5 @@
 {
-    "name": "pac-man",
+    "name": "pac-man #2",
     "description": "",
     "dependencies": {
         "device": "*",
@@ -8,7 +8,8 @@
         "Timers": "github:microsoft/arcade-timers#v1.1.0",
         "arcade-tile-util": "github:microsoft/arcade-tile-util#v1.0.1",
         "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.1.0",
-        "Color Fading": "github:jwunderl/pxt-color#v0.2.2"
+        "Color Fading": "github:jwunderl/pxt-color#v0.2.2",
+        "pxt-raycasting": "github:aqeeaqee/pxt-raycasting#v0.3.15"
     },
     "files": [
         "main.blocks",
@@ -25,7 +26,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.11.37",
+        "target": "1.12.25",
         "targetId": "arcade"
     },
     "supportedTargets": [

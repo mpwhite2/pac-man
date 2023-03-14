@@ -17,7 +17,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite4, otherS
     } else {
         info.changeLifeBy(-1)
         tiles.placeOnRandomTile(otherSprite4, assets.tile`transparency16`)
-        game.showLongText("      You lost a life!", DialogLayout.Bottom)
+        game.showLongText("You lost a life!", DialogLayout.Full)
     }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Door, function (sprite, otherSprite) {
@@ -205,9 +205,9 @@ let _Food: Sprite = null
 let Loc: tiles.Location = null
 let Gamestate = 0
 let Pac: Sprite = null
+game.showLongText("Controls;arrow keys", DialogLayout.Full)
 tiles.setCurrentTilemap(tilemap`level1`)
-Pac = sprites.create(assets.image`PAC-man`, SpriteKind.Player)
-controller.moveSprite(Pac, 100, 100)
+Pac = Render.getRenderSpriteInstance()
 tiles.placeOnTile(Pac, tiles.getTileLocation(18, 9))
 scene.cameraFollowSprite(Pac)
 let Foodspots = tiles.getTilesByType(assets.tile`transparency16`)
