@@ -8,6 +8,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Sfood, function (sprite, otherSp
     info.changeScoreBy(10)
     Pellets += -1
 })
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    Render.toggleViewMode()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite4, otherSprite4) {
     if (Gamestate == 1) {
         info.changeScoreBy(400)
@@ -19,6 +22,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite4, otherS
         tiles.placeOnRandomTile(otherSprite4, assets.tile`transparency16`)
         game.showLongText("You lost a life!", DialogLayout.Full)
     }
+})
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    Render.jumpWithHeightAndDuration(Pac, 41, 500)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Door, function (sprite, otherSprite) {
     if (otherSprite == mySprite) {
@@ -47,13 +53,13 @@ info.onLifeZero(function () {
 function EnemyMove (EnemySprite: Sprite) {
     if (EnemySprite.isHittingTile(CollisionDirection.Left) || EnemySprite.isHittingTile(CollisionDirection.Top) || (EnemySprite.isHittingTile(CollisionDirection.Right) || EnemySprite.isHittingTile(CollisionDirection.Bottom))) {
         if (Math.percentChance(25)) {
-            EnemySprite.vy = -100
+            EnemySprite.vy = -50
         } else if (Math.percentChance(33.333333)) {
-            EnemySprite.vy = 100
+            EnemySprite.vy = 50
         } else if (Math.percentChance(50)) {
-            EnemySprite.vx = -100
+            EnemySprite.vx = -50
         } else {
-            EnemySprite.vx = 100
+            EnemySprite.vx = 50
         }
     }
 }
@@ -185,7 +191,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite3, otherSp
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (Gamestate == 0) {
-        otherSprite.setVelocity(0 - sprite.vx / 5, 0 - sprite.vy / 5)
+        otherSprite.setVelocity(0 - sprite.vx / 10, 0 - sprite.vy / 10)
     } else {
         otherSprite.setVelocity(0 + sprite.vx / 10, 0 + sprite.vy / 10)
     }
@@ -233,7 +239,7 @@ let Enemy1 = sprites.create(img`
     . . . . 3 . 3 . 3 . 3 . 3 . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Enemy)
-Enemy1.vx = 100
+Enemy1.vx = 50
 let Enemy2 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . 9 9 9 9 . . . . . . 
@@ -252,7 +258,7 @@ let Enemy2 = sprites.create(img`
     . . . . 9 . 9 . 9 . 9 . 9 . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Enemy)
-Enemy2.vx = -100
+Enemy2.vx = -50
 let Enemy3 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . 4 4 4 4 . . . . . . 
@@ -271,7 +277,7 @@ let Enemy3 = sprites.create(img`
     . . . . 4 . 4 . 4 . 4 . 4 . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Enemy)
-Enemy3.vy = 100
+Enemy3.vy = 50
 let Enemy4 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . 2 2 2 2 . . . . . . 
@@ -290,12 +296,12 @@ let Enemy4 = sprites.create(img`
     . . . . 2 . 2 . 2 . 2 . 2 . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Enemy)
-Enemy4.vy = -100
+Enemy4.vy = -50
 tiles.placeOnTile(Enemy1, tiles.getTileLocation(9, 9))
 tiles.placeOnTile(Enemy2, tiles.getTileLocation(10, 9))
 tiles.placeOnTile(Enemy3, tiles.getTileLocation(9, 10))
 tiles.placeOnTile(Enemy4, tiles.getTileLocation(10, 10))
-for (let index = 0; index < 1; index++) {
+for (let index = 0; index < 5; index++) {
     Loc = Foodspots._pickRandom()
     _Food = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -355,8 +361,9 @@ let mySprite2 = sprites.create(img`
     f f f f f f f f f f f f f f f f 
     `, SpriteKind.Door)
 tiles.placeOnTile(mySprite2, tiles.getTileLocation(19, 9))
-info.setLife(3)
+info.setLife(5)
 doSomething2()
+Render.moveWithController(5)
 game.onUpdateInterval(10, function () {
     projectile = sprites.createProjectileFromSprite(img`
         . . . . . . . . . . . . . . . . 
@@ -474,6 +481,7 @@ game.onUpdateInterval(1, function () {
     Prevgamestate = Gamestate
 })
 forever(function () {
+    Pac.setFlag(SpriteFlag.GhostThroughWalls, false)
     characterAnimations.loopFrames(
     Pac,
     [img`
